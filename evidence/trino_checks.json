@@ -1,0 +1,34 @@
+{
+  "SHOW CATALOGS": [
+    [
+      "bronze"
+    ],
+    [
+      "gold"
+    ],
+    [
+      "silver"
+    ],
+    [
+      "system"
+    ],
+    [
+      "tpch"
+    ]
+  ],
+  "SELECT count(*) AS rows FROM gold.lab.q10_top20_customers": [
+    [
+      20
+    ]
+  ],
+  "SELECT snapshot_id, operation FROM silver.lab.\"schema_evolution_demo$snapshots\" ORDER BY committed_at": [
+    [
+      7525696721740930333,
+      "append"
+    ],
+    [
+      5990263045343402828,
+      "append"
+    ]
+  ]
+}

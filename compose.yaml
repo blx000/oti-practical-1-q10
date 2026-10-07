@@ -1,0 +1,86 @@
+name: oti-lab1
+
+services:
+  minio:
+    image: pgsty/minio:RELEASE.2026-08-04T00-00-00Z
+    command: server /data --console-address ':9001'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    ports:
+      - '9000:9000'
+      - '19001:9001'
+    volumes:
+      - minio-data:/data
+
+  minio-init:
+    image: pgsty/mc:RELEASE.2026-09-16T00-00-00Z
+    entrypoint: /bin/sh
+    command: -c 'until mc alias set local http://minio:9000 "$${MINIO_ROOT_USER}" "$${MINIO_ROOT_PASSWORD}"; do sleep 2; done; mc mb --ignore-existing local/bronze local/silver local/gold'
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    depends_on:
+      - minio
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: lakekeeper
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: lakekeeper
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U lakekeeper -d lakekeeper']
+      interval: 5s
+      retries: 20
+
+  lakekeeper-migrate:
+    image: quay.io/lakekeeper/catalog@sha256:52d2ba41f6368515fa4a801a434eef529400f9acc5f0169b6b12b8335fccd873
+    command: migrate
+    environment: &lakekeeper_env
+      LAKEKEEPER__PG_ENCRYPTION_KEY: ${LAKEKEEPER_PG_ENCRYPTION_KEY}
+      LAKEKEEPER__PG_DATABASE_URL_READ: postgresql://lakekeeper:${POSTGRES_PASSWORD}@postgres:5432/lakekeeper
+      LAKEKEEPER__PG_DATABASE_URL_WRITE: postgresql://lakekeeper:${POSTGRES_PASSWORD}@postgres:5432/lakekeeper
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  lakekeeper:
+    image: quay.io/lakekeeper/catalog@sha256:52d2ba41f6368515fa4a801a434eef529400f9acc5f0169b6b12b8335fccd873
+    command: serve
+    environment: *lakekeeper_env
+    ports:
+      - '8181:8181'
+    depends_on:
+      lakekeeper-migrate:
+        condition: service_completed_successfully
+
+  trino:
+    image: trinodb/trino:476
+    ports:
+      - '8080:8080'
+    volumes:
+      - ./.local/catalog:/etc/trino/catalog:ro
+    depends_on:
+      - lakekeeper
+      - minio
+
+  superset:
+    profiles: ['bi']
+    build: ./superset
+    environment:
+      SUPERSET_SECRET_KEY: ${SUPERSET_SECRET_KEY}
+      SUPERSET_ADMIN_PASSWORD: ${SUPERSET_ADMIN_PASSWORD}
+    ports:
+      - '18088:8088'
+    volumes:
+      - superset-data:/app/superset_home
+    depends_on:
+      - trino
+
+volumes:
+  minio-data:
+  pg-data:
+  superset-data:

@@ -1,0 +1,66 @@
+{
+  "database": "Trino Bronze",
+  "query": "SELECT custkey, name, acctbal FROM bronze.lab.customer ORDER BY custkey LIMIT 10",
+  "columns": [
+    "custkey",
+    "name",
+    "address",
+    "nationkey",
+    "phone",
+    "acctbal",
+    "mktsegment",
+    "comment"
+  ],
+  "rows": [
+    {
+      "custkey": 1,
+      "name": "Customer#000000001",
+      "acctbal": 711.56
+    },
+    {
+      "custkey": 2,
+      "name": "Customer#000000002",
+      "acctbal": 121.65
+    },
+    {
+      "custkey": 3,
+      "name": "Customer#000000003",
+      "acctbal": 7498.12
+    },
+    {
+      "custkey": 4,
+      "name": "Customer#000000004",
+      "acctbal": 2866.83
+    },
+    {
+      "custkey": 5,
+      "name": "Customer#000000005",
+      "acctbal": 794.47
+    },
+    {
+      "custkey": 6,
+      "name": "Customer#000000006",
+      "acctbal": 7638.57
+    },
+    {
+      "custkey": 7,
+      "name": "Customer#000000007",
+      "acctbal": 9561.95
+    },
+    {
+      "custkey": 8,
+      "name": "Customer#000000008",
+      "acctbal": 6819.74
+    },
+    {
+      "custkey": 9,
+      "name": "Customer#000000009",
+      "acctbal": 8324.07
+    },
+    {
+      "custkey": 10,
+      "name": "Customer#000000010",
+      "acctbal": 2753.54
+    }
+  ]
+}

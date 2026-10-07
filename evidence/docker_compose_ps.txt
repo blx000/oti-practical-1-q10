@@ -1,0 +1,6 @@
+NAME                    IMAGE                                      COMMAND                  SERVICE      CREATED          STATUS                    PORTS
+oti-lab1-lakekeeper-1   quay.io/lakekeeper/catalog:latest-main     "/home/nonroot/lakek…"   lakekeeper   17 minutes ago   Up 16 minutes             0.0.0.0:8181->8181/tcp, [::]:8181->8181/tcp
+oti-lab1-minio-1        pgsty/minio:RELEASE.2026-08-04T00-00-00Z   "/usr/bin/docker-ent…"   minio        17 minutes ago   Up 16 minutes             0.0.0.0:9000->9000/tcp, [::]:9000->9000/tcp, 0.0.0.0:19001->9001/tcp, [::]:19001->9001/tcp
+oti-lab1-postgres-1     postgres:17                                "docker-entrypoint.s…"   postgres     17 minutes ago   Up 16 minutes (healthy)   5432/tcp
+oti-lab1-superset-1     oti-lab1-superset                          "/bin/sh -c 'superse…"   superset     9 minutes ago    Up 9 minutes (healthy)    0.0.0.0:18088->8088/tcp, [::]:18088->8088/tcp
+oti-lab1-trino-1        trinodb/trino:476                          "/usr/lib/trino/bin/…"   trino        17 minutes ago   Up 16 minutes (healthy)   0.0.0.0:8080->8080/tcp, [::]:8080->8080/tcp
